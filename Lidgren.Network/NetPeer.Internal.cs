@@ -378,17 +378,17 @@ namespace Lidgren.Network
 				// do connection heartbeats
 				lock (m_connections)
 				{
-					foreach (NetConnection conn in m_connections)
+					for (int i = m_connections.Count - 1; i >= 0; i--)
 					{
+						var conn = m_connections[i];
 						conn.Heartbeat(now, m_frameCounter);
 						if (conn.m_status == NetConnectionStatus.Disconnected)
 						{
 							//
 							// remove connection
 							//
-							m_connections.Remove(conn);
+							m_connections.RemoveAt(i);
 							m_connectionLookup.Remove(conn.RemoteEndPoint);
-							break; // can't continue iteration here
 						}
 					}
 				}
