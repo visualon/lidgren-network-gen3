@@ -400,13 +400,14 @@ namespace Lidgren.Network
 				{
 					NetOutgoingMessage om = unsent.Item2;
 
-					bool connReset;
 					int len = om.Encode(m_sendBuffer, 0, 0);
-					SendPacket(len, unsent.Item1, 1, out connReset);
 
 					Interlocked.Decrement(ref om.m_recyclingCount);
 					if (om.m_recyclingCount <= 0)
 						Recycle(om);
+
+					bool connReset;
+					SendPacket(len, unsent.Item1, 1, out connReset);
 				}
 			}
 
