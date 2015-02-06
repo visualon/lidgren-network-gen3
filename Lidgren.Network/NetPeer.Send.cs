@@ -95,7 +95,7 @@ namespace Lidgren.Network
 		/// <param name="recipients">The list of recipients to send to</param>
 		/// <param name="method">How to deliver the message</param>
 		/// <param name="sequenceChannel">Sequence channel within the delivery method</param>
-		public void SendMessage(NetOutgoingMessage msg, List<NetConnection> recipients, NetDeliveryMethod method, int sequenceChannel)
+		public void SendMessage(NetOutgoingMessage msg, IList<NetConnection> recipients, NetDeliveryMethod method, int sequenceChannel)
 		{
 			if (msg == null)
 				throw new ArgumentNullException("msg");
@@ -220,7 +220,10 @@ namespace Lidgren.Network
 			msg.m_isSent = true;
 
 			if (m_configuration.IsMessageTypeEnabled(NetIncomingMessageType.UnconnectedData) == false)
+			{
+				Interlocked.Decrement(ref msg.m_recyclingCount);
 				return; // dropping unconnected message since it's not enabled for receiving
+			}
 
 			NetIncomingMessage om = CreateIncomingMessage(NetIncomingMessageType.UnconnectedData, msg.LengthBytes);
 			om.Write(msg);
